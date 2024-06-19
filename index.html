@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 130vh;
+            background: linear-gradient(175deg, red, orange, yellow);
+            font-family: 'Arial', sans-serif;
+            margin: 0; /* Corregido el valor de margen */
+            overflow: hidden; /* Evita el desbordamiento de los círculos */
+            position: relative; /* Para los círculos absolutos */
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative; /* Añadido para z-index */
+            z-index: 1; /* Añadido para z-index */
+        }
+
+        .display {
+            background-color: orangered;
+            color: #fff;
+            font-size: 2rem;
+            text-align: right;
+            padding: 20px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+        }
+
+        .button {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: yellow;
+        }
+
+        .operator {
+            background-color: ;
+            color: #fff;
+        }
+
+        .operator:hover {
+            background-color: #e58900;
+        }
+
+        /* Estilos para los círculos */
+        .circles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Para que no interfieran con los botones */
+            z-index: 0; /* Atrás de todo */
+        }
+
+        .circle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: yellow;
+            animation: fall 5s linear infinite; /* Animación de caída */
+            pointer-events: none; /* Para que no interfieran con los botones */
+        }
+
+        /* Animación de caída */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display"></div>
+        <div class="buttons">
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="chooseOperation('+')">+</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button operator" onclick="chooseOperation('-')">-</button>
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button operator" onclick="chooseOperation('*')">*</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="button" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="compute()">=</button>
+            <button class="button operator" onclick="chooseOperation('/')">/</button>
+        </div>
+    </div>
+    
+    <!-- Contenedor de los círculos -->
+    <div class="circles-container">
+        <!-- Círculos individuales -->
+        <div class="circle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="circle" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="circle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="circle" style="left: 40%; animation-delay: 0.5s;"></div>
+        <div class="circle" style="left: 50%; animation-delay: 1.5s;"></div>
+        <div class="circle" style="left: 60%; animation-delay: 2.5s;"></div>
+        <div class="circle" style="left: 70%; animation-delay: 1s;"></div>
+        <div class="circle" style="left: 80%; animation-delay: 0.5s;"></div>
+        <div class="circle" style="left: 90%; animation-delay: 2s;"></div>
+    </div>
+
+    <script>
+        let currentOperand = '';
+        let previousOperand = '';
+        let operation = undefined;
+
+        function appendNumber(number) {
+            if (number === '0' && currentOperand === '0') return;
+            currentOperand = currentOperand.toString() + number.toString();
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').innerText = currentOperand;
+        }
+
+        function chooseOperation(op) {
+            if (currentOperand === '') return;
+            if (previousOperand !== '') {
+                compute();
+            }
+            operation = op;
+            previousOperand = currentOperand;
+            currentOperand = '';
+        }
+
+        function compute() {
+            let computation;
+            const prev = parseFloat(previousOperand);
+            const current = parseFloat(currentOperand);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (operation) {
+                case '+':
+                    computation = prev + current;
+                    break;
+                case '-':
+                    computation = prev - current;
+                    break;
+                case '*':
+                    computation = prev * current;
+                    break;
+                case '/':
+                    computation = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            currentOperand = computation;
+            operation = undefined;
+            previousOperand = '';
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentOperand = '';
+            previousOperand = '';
+            operation = undefined;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
